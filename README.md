@@ -15,7 +15,7 @@ Diferenciais:
 
 ✅ Resposta rápida ao cliente (< 50ms)
 
-2️⃣ Serviço B - OrderProcessor (Processador)
+2️⃣ Serviço B - OrderConsumer (Processador)
 Tecnologias: .NET Worker Service, MassTransit, Entity Framework Core
 
 Função: Processar pedidos em background
