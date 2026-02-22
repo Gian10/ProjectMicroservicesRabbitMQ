@@ -1,6 +1,7 @@
 # Sistema de Processamento de Pedidos com Microserviços e Mensageria
 
 ⚙️ COMPONENTES PRINCIPAIS
+
 1️⃣ Serviço A - CreateOrder (API de Pedidos)
 Tecnologias: ASP.NET Core 8, Entity Framework Core, MassTransit
 
