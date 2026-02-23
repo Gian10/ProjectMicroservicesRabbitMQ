@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OrderConsumer.Consumers;
 using OrderConsumer.Data;
 
@@ -16,6 +17,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<ProcessadorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+
 // CONFIGURA MASSTRANSIT
 builder.Services.AddMassTransit(x =>
 {
@@ -24,7 +27,12 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+
+        var rabbitHost = builder.Configuration["RabbitMq:Host"] ?? "rabbitmq";
+        var rabbitPort = int.Parse(builder.Configuration["RabbitMq:Port"] ?? "5672");
+
+
+        cfg.Host($"rabbitmq://{rabbitHost}:{rabbitPort}", h =>
         {
             h.Username("guest");
             h.Password("guest");
@@ -50,6 +58,33 @@ builder.Services.Configure<MassTransitHostOptions>(options =>
 });
 
 var app = builder.Build();
+
+// 4️⃣ APLICA MIGRATIONS DE FORMA SEGURA
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ProcessadorDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        logger.LogInformation("🔄 Verificando banco de dados...");
+
+        // Tenta aplicar migrations - não tenta criar o banco se já existir
+        db.Database.Migrate();
+
+        logger.LogInformation("✅ Banco verificado com sucesso!");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "❌ Erro ao verificar banco");
+
+        // Se for erro de banco já existir, ignora
+        if (!ex.Message.Contains("already exists"))
+        {
+            throw;
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

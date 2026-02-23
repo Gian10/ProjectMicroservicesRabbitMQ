@@ -1,0 +1,84 @@
+
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+     - "5673:5672"   
+     - "15673:15672"  
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - microservices-net
+
+  sql-createorder:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-createorder
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "SqlServer2025!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql-createorder-data:/var/opt/mssql
+    networks:
+      - microservices-net
+
+  sql-orderconsumer:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-orderconsumer
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "SqlServer2025!"
+    ports:
+      - "1434:1433"
+    volumes:
+      - sql-orderconsumer-data:/var/opt/mssql
+    networks:
+      - microservices-net
+
+  createorder:
+    build:
+      context: .
+      dockerfile: CreateOrder/Dockerfile
+    container_name: createorder
+    ports:
+      - "8080:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__DefaultConnection: "Server=sql-createorder;Database=PedidosDb;User Id=sa;Password=SqlServer2025!;TrustServerCertificate=True;"
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Port: 5673
+    depends_on:
+      - rabbitmq
+      - sql-createorder
+    networks:
+      - microservices-net
+
+  orderconsumer:
+    build:
+      context: .
+      dockerfile: OrderConsumer/Dockerfile
+    environment:
+       - ConnectionStrings__DefaultConnection=Server=sql-orderconsumer;Database=ProcessadorDb;User Id=sa;Password=SqlServer2025!;TrustServerCertificate=True;
+       - RabbitMq__Host=rabbitmq
+       - RabbitMq__Port=5672
+       - RUN_MIGRATIONS=true
+    depends_on:
+      - rabbitmq
+      - sql-orderconsumer
+    deploy:
+      replicas: 2
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  sql-createorder-data:
+  sql-orderconsumer-data:

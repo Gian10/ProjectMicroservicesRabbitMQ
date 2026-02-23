@@ -295,3 +295,4 @@ C:\Users\gkarlos\source\repos\ProjectMicroservices\CreateOrder\obj\Debug\net8.0\
 C:\Users\gkarlos\source\repos\ProjectMicroservices\CreateOrder\obj\Debug\net8.0\CreateOrder.pdb
 C:\Users\gkarlos\source\repos\ProjectMicroservices\CreateOrder\obj\Debug\net8.0\CreateOrder.genruntimeconfig.cache
 C:\Users\gkarlos\source\repos\ProjectMicroservices\CreateOrder\obj\Debug\net8.0\ref\CreateOrder.dll
+C:\Users\gkarlos\source\repos\ProjectMicroservices\CreateOrder\obj\Debug\net8.0\CreateOrder.sourcelink.json

@@ -23,11 +23,24 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+        // 🔥 LÊ DO APPSETTINGS OU VARIÁVEL DE AMBIENTE
+        //var rabbitHost = builder.Configuration["RabbitMq:Host"] ?? "localhost";
+        //var rabbitPort = int.Parse(builder.Configuration["RabbitMq:Port"] ?? "5672");
+        // 🔥 TEMPORARIAMENTE - FIXO PARA TESTE!
+        var rabbitHost = "rabbitmq";
+        var rabbitPort = 5672;  // ← FIXO EM 5672!
+
+        Console.WriteLine($"🔌 Conectando ao RabbitMQ em {rabbitHost}:{rabbitPort}");
+
+
+        // SINTAXE CORRETA do MassTransit
+        cfg.Host($"rabbitmq://{rabbitHost}:{rabbitPort}", h =>
         {
             h.Username("guest");
             h.Password("guest");
         });
+        // 🔥 ADICIONAR RETRY NA CONEXÃO
+        cfg.UseMessageRetry(r => r.Interval(5, TimeSpan.FromSeconds(5)));
 
         cfg.ConfigureEndpoints(context);
     });
@@ -43,6 +56,25 @@ builder.Services.AddHostedService<OutboxPublisher>();
 
 
 var app = builder.Build();
+
+// 🔥 ADICIONAR ISSO - CRIA/ATUALIZA BANCO AUTOMATICAMENTE!
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        logger.LogInformation("🔄 Aplicando migrations...");
+        db.Database.Migrate();
+        logger.LogInformation("✅ Migrations aplicadas com sucesso!");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "❌ Erro ao aplicar migrations");
+        throw;
+    }
+}
 
 
 

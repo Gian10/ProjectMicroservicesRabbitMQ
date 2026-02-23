@@ -315,3 +315,4 @@ C:\Users\gkarlos\source\repos\ProjectMicroservices\OrderConsumer\obj\Debug\net8.
 C:\Users\gkarlos\source\repos\ProjectMicroservices\OrderConsumer\obj\Debug\net8.0\OrderConsumer.pdb
 C:\Users\gkarlos\source\repos\ProjectMicroservices\OrderConsumer\obj\Debug\net8.0\OrderConsumer.genruntimeconfig.cache
 C:\Users\gkarlos\source\repos\ProjectMicroservices\OrderConsumer\obj\Debug\net8.0\ref\OrderConsumer.dll
+C:\Users\gkarlos\source\repos\ProjectMicroservices\OrderConsumer\obj\Debug\net8.0\OrderConsumer.sourcelink.json

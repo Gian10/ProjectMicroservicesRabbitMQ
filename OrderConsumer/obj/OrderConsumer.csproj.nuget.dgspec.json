@@ -101,7 +101,7 @@
           "dependencies": {
             "MassTransit.RabbitMQ": {
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[8.2.5, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
