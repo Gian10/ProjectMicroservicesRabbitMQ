@@ -1,0 +1,31 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderconsumer-deployment
+  labels:
+    app: orderconsumer
+    tier: worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orderconsumer
+  template:
+    metadata:
+      labels:
+        app: orderconsumer
+        tier: worker
+    spec:
+      containers:
+      - name: orderconsumer
+        image: projectmicroservices-orderconsumer:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ConnectionStrings__DefaultConnection
+          value: "Server=sql-orderconsumer-service;Database=ProcessadorDb;User Id=sa;Password=SqlServer2025!;TrustServerCertificate=True;"
+        - name: RabbitMq__Host
+          value: "rabbitmq-service"
+        - name: RabbitMq__Port
+          value: "5672"
+        - name: RUN_MIGRATIONS
+          value: "false"

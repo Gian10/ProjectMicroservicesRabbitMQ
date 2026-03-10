@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sql-createorder-deployment
+  labels:
+    app: sql-createorder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sql-createorder
+  template:
+    metadata:
+      labels:
+        app: sql-createorder
+    spec:
+      containers:
+      - name: sql-createorder
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_SA_PASSWORD
+          value: "SqlServer2025!"
+        - name: MSSQL_PID
+          value: "Developer"
+        ports:
+        - containerPort: 1433
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sql-createorder-service
+spec:
+  selector:
+    app: sql-createorder
+  ports:
+  - protocol: TCP
+    port: 1433
+    targetPort: 1433

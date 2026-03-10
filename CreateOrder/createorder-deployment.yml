@@ -1,0 +1,29 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: createorder-deployment
+  labels:
+    app: createorder
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: createorder
+  template:
+    metadata:
+      labels:
+        app: createorder
+    spec:
+      containers:
+      - name: createorder
+        image: projectmicroservices-createorder:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+        env:
+        - name: RabbitMq__Host
+          value: "rabbitmq-service"
+        - name: RabbitMq__Port
+          value: "5672"
+        - name: ConnectionStrings__DefaultConnection
+          value: "Server=sql-createorder-service;Database=PedidosDb;User Id=sa;Password=SqlServer2025!;TrustServerCertificate=True;"

@@ -12,6 +12,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DCAC7F58-409C-4665-9E18-CB8205B6E07E}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
+		sql-createorder.yml = sql-createorder.yml
+		sql-orderconsumer.yml = sql-orderconsumer.yml
+		rabbitmq.yml = rabbitmq.yml
 	EndProjectSection
 EndProject
 Global
